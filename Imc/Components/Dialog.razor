@@ -1,0 +1,41 @@
+﻿@if (_isOpen)
+{
+    <div class="modal-backdrop" @onclick="CloseAsync">
+        <div class="modal-card" @onclick:stopPropagation="true">
+            <div class="dialog-content">
+                @ChildContent
+
+                <br />
+
+                <button class="btn btn-filled mb" @onclick="CloseAsync">
+                    Registrar IMC
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool _isOpen;
+
+    [Parameter, EditorRequired]
+    public RenderFragment ChildContent { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback OnModalCloseCallBack { get; set; }
+
+    public Task ShowModalAsync()
+    {
+        _isOpen = true;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private async Task CloseAsync()
+    {
+        _isOpen = false;
+        StateHasChanged();
+
+        await OnModalCloseCallBack.InvokeAsync();
+    }
+}
